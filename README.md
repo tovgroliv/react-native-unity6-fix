@@ -3,13 +3,6 @@
 The plugin that allows you to embed a Unity project into React Native as a full-fledged component. The plugin now supports the new architecture.
 
 > [!NOTE]
-> **Unity 6 & Expo Router 兼容性修复**
-> 
-> 本版本已修复在 Unity 6 和 Expo Router (Expo SDK 53) 环境下的编译和运行时崩溃问题：
-> - 修复了 `UnityPlayer` 类型兼容性问题，支持 Unity 6+ 和早期版本
-> - 解决了 "The specified child already has a parent" 运行时崩溃
-> - 改进了视图父子关系管理，防止内存泄漏
-> - 增强了错误处理机制，提高应用稳定性
 > 
 > **Unity 6 & Expo Router Compatibility Fix**
 > 
