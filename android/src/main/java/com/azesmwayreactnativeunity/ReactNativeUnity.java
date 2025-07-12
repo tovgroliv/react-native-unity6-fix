@@ -112,13 +112,13 @@ public class ReactNativeUnity {
             return;
         }
 
-        // 获取 Unity 的 Frame 视图
+        // Get Unity's Frame view
         android.view.View unityFrame = unityPlayer.requestFrame();
         if (unityFrame == null) {
             return;
         }
 
-        // 多次检查并移除父视图，确保移除操作完全生效
+        // Multiple checks and remove parent view to ensure removal operation is fully effective
         for (int i = 0; i < 3; i++) {
             android.view.ViewParent parent = unityFrame.getParent();
             if (parent != null) {
@@ -132,7 +132,7 @@ public class ReactNativeUnity {
                 parentGroup.endViewTransition(unityFrame);
                 parentGroup.removeView(unityFrame);
                 
-                // 再次检查是否移除成功
+                // Check again if removal is successful
                 if (unityFrame.getParent() == null) {
                     break;
                 }
@@ -141,14 +141,14 @@ public class ReactNativeUnity {
             }
         }
 
-        // 最后再次确认没有父视图
+        // Last check to ensure no parent view
         if (unityFrame.getParent() != null) {
-            // 如果还是有父视图，强制移除
+            // If there's still a parent, force remove
             try {
                 ViewGroup parentGroup = (ViewGroup) unityFrame.getParent();
                 parentGroup.removeView(unityFrame);
             } catch (Exception e) {
-                // 如果移除失败，不继续执行
+                // If removal fails, do not continue
                 return;
             }
         }
@@ -160,7 +160,7 @@ public class ReactNativeUnity {
         final Activity activity = ((Activity) unityPlayer.getContextPlayer());
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(1, 1);
         
-        // 添加之前最后一次检查
+        // Last check before add
         if (unityFrame.getParent() == null) {
             activity.addContentView(unityFrame, layoutParams);
         }
@@ -171,20 +171,20 @@ public class ReactNativeUnity {
             return;
         }
 
-        // 获取 Unity 的 Frame 视图
+        // Get Unity's Frame view
         android.view.View unityFrame = unityPlayer.requestFrame();
         if (unityFrame == null) {
             return;
         }
 
-        // 多次检查并移除父视图，确保移除操作完全生效
+        // Multiple checks and remove parent view to ensure removal operation is fully effective
         for (int i = 0; i < 3; i++) {
             android.view.ViewParent parent = unityFrame.getParent();
             if (parent != null) {
                 ViewGroup parentGroup = (ViewGroup) parent;
                 parentGroup.removeView(unityFrame);
                 
-                // 再次检查是否移除成功
+                // Check again if removal is successful
                 if (unityFrame.getParent() == null) {
                     break;
                 }
@@ -193,21 +193,21 @@ public class ReactNativeUnity {
             }
         }
 
-        // 最后再次确认没有父视图
+        // Last check to ensure no parent view
         if (unityFrame.getParent() != null) {
-            // 如果还是有父视图，强制移除
+            // If there's still a parent, force remove
             try {
                 ViewGroup parentGroup = (ViewGroup) unityFrame.getParent();
                 parentGroup.removeView(unityFrame);
             } catch (Exception e) {
-                // 如果移除失败，不继续执行
+                // If removal fails, do not continue
                 return;
             }
         }
 
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT);
         
-        // 添加之前最后一次检查
+        // Last check before add
         if (unityFrame.getParent() == null) {
             group.addView(unityFrame, 0, layoutParams);
             unityPlayer.windowFocusChanged(true);

@@ -60,20 +60,20 @@ public class ReactNativeUnityView extends FrameLayout {
   protected void onDetachedFromWindow() {
     if (!this.keepPlayerMounted) {
         try {
-            // 延迟执行，确保所有的 detach 操作都完成
+            // Delay execution to ensure all detach operations are completed
             post(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         addUnityViewToBackground();
                     } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
-                        // 如果失败，不抛出异常，而是记录日志
+                        // If failed, do not throw exception, but log
                         android.util.Log.e("ReactNativeUnity", "Failed to add Unity view to background", e);
                     }
                 }
             });
         } catch (Exception e) {
-            // 如果 post 失败，直接尝试调用
+            // If post fails, try to call directly
             try {
                 addUnityViewToBackground();
             } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException ex) {
