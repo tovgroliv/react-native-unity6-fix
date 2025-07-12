@@ -112,15 +112,45 @@ public class ReactNativeUnity {
             return;
         }
 
-        if (unityPlayer.getParentPlayer() != null) {
-            // NOTE: If we're being detached as part of the transition, make sure
-            // to explicitly finish the transition first, as it might still keep
-            // the view's parent around despite calling `removeView()` here. This
-            // prevents a crash on an `addContentView()` later on.
-            // Otherwise, if there's no transition, it's a no-op.
-            // See https://stackoverflow.com/a/58247331
-            ((ViewGroup) unityPlayer.getParentPlayer()).endViewTransition(unityPlayer.requestFrame());
-            ((ViewGroup) unityPlayer.getParentPlayer()).removeView(unityPlayer.requestFrame());
+        // 获取 Unity 的 Frame 视图
+        android.view.View unityFrame = unityPlayer.requestFrame();
+        if (unityFrame == null) {
+            return;
+        }
+
+        // 多次检查并移除父视图，确保移除操作完全生效
+        for (int i = 0; i < 3; i++) {
+            android.view.ViewParent parent = unityFrame.getParent();
+            if (parent != null) {
+                // NOTE: If we're being detached as part of the transition, make sure
+                // to explicitly finish the transition first, as it might still keep
+                // the view's parent around despite calling `removeView()` here. This
+                // prevents a crash on an `addContentView()` later on.
+                // Otherwise, if there's no transition, it's a no-op.
+                // See https://stackoverflow.com/a/58247331
+                ViewGroup parentGroup = (ViewGroup) parent;
+                parentGroup.endViewTransition(unityFrame);
+                parentGroup.removeView(unityFrame);
+                
+                // 再次检查是否移除成功
+                if (unityFrame.getParent() == null) {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+
+        // 最后再次确认没有父视图
+        if (unityFrame.getParent() != null) {
+            // 如果还是有父视图，强制移除
+            try {
+                ViewGroup parentGroup = (ViewGroup) unityFrame.getParent();
+                parentGroup.removeView(unityFrame);
+            } catch (Exception e) {
+                // 如果移除失败，不继续执行
+                return;
+            }
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -129,7 +159,11 @@ public class ReactNativeUnity {
 
         final Activity activity = ((Activity) unityPlayer.getContextPlayer());
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(1, 1);
-        activity.addContentView(unityPlayer.requestFrame(), layoutParams);
+        
+        // 添加之前最后一次检查
+        if (unityFrame.getParent() == null) {
+            activity.addContentView(unityFrame, layoutParams);
+        }
     }
 
     public static void addUnityViewToGroup(ViewGroup group) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
@@ -137,15 +171,49 @@ public class ReactNativeUnity {
             return;
         }
 
-        if (unityPlayer.getParentPlayer() != null) {
-            ((ViewGroup) unityPlayer.getParentPlayer()).removeView(unityPlayer.requestFrame());
+        // 获取 Unity 的 Frame 视图
+        android.view.View unityFrame = unityPlayer.requestFrame();
+        if (unityFrame == null) {
+            return;
+        }
+
+        // 多次检查并移除父视图，确保移除操作完全生效
+        for (int i = 0; i < 3; i++) {
+            android.view.ViewParent parent = unityFrame.getParent();
+            if (parent != null) {
+                ViewGroup parentGroup = (ViewGroup) parent;
+                parentGroup.removeView(unityFrame);
+                
+                // 再次检查是否移除成功
+                if (unityFrame.getParent() == null) {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+
+        // 最后再次确认没有父视图
+        if (unityFrame.getParent() != null) {
+            // 如果还是有父视图，强制移除
+            try {
+                ViewGroup parentGroup = (ViewGroup) unityFrame.getParent();
+                parentGroup.removeView(unityFrame);
+            } catch (Exception e) {
+                // 如果移除失败，不继续执行
+                return;
+            }
         }
 
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT);
-        group.addView(unityPlayer.requestFrame(), 0, layoutParams);
-        unityPlayer.windowFocusChanged(true);
-        unityPlayer.requestFocusPlayer();
-        unityPlayer.resume();
+        
+        // 添加之前最后一次检查
+        if (unityFrame.getParent() == null) {
+            group.addView(unityFrame, 0, layoutParams);
+            unityPlayer.windowFocusChanged(true);
+            unityPlayer.requestFocusPlayer();
+            unityPlayer.resume();
+        }
     }
 
     public interface UnityPlayerCallback {

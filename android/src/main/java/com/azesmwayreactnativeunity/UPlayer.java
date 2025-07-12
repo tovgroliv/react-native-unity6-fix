@@ -59,14 +59,18 @@ public class UPlayer {
 
     public Object getParentPlayer() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         try {
-            Method getFrameLayout = unityPlayer.getClass().getMethod("getFrameLayout");
-            FrameLayout frame = (FrameLayout) this.requestFrame();
-
-            return frame.getParent();
-        } catch (NoSuchMethodException e) {
-            Method getParent = unityPlayer.getClass().getMethod("getParent");
-
-            return getParent.invoke(unityPlayer);
+            // Unity 6+ 使用 getFrameLayout() 方法
+            android.view.View frame = this.requestFrame();
+            return frame != null ? frame.getParent() : null;
+        } catch (Exception e) {
+            // Unity 6 之前的版本，直接在 UnityPlayer 上调用 getParent
+            try {
+                Method getParent = unityPlayer.getClass().getMethod("getParent");
+                return getParent.invoke(unityPlayer);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
+                // 如果都失败了，返回 null
+                return null;
+            }
         }
     }
 
@@ -80,33 +84,55 @@ public class UPlayer {
 
     public void requestFocusPlayer() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         try {
-            Method getFrameLayout = unityPlayer.getClass().getMethod("getFrameLayout");
-
-            FrameLayout frame = (FrameLayout) this.requestFrame();
-            frame.requestFocus();
-        } catch (NoSuchMethodException e) {
-            Method requestFocus = unityPlayer.getClass().getMethod("requestFocus");
-
-            requestFocus.invoke(unityPlayer);
+            // Unity 6+ 使用 getFrameLayout() 方法
+            android.view.View frame = this.requestFrame();
+            if (frame != null) {
+                frame.requestFocus();
+            }
+        } catch (Exception e) {
+            // Unity 6 之前的版本，直接在 UnityPlayer 上调用 requestFocus
+            try {
+                Method requestFocus = unityPlayer.getClass().getMethod("requestFocus");
+                requestFocus.invoke(unityPlayer);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
+                // 如果都失败了，就不做任何操作
+            }
         }
     }
 
-    public FrameLayout requestFrame() throws NoSuchMethodException {
+    public android.view.View requestFrame() {
         try {
+            // Unity 6+ 使用 getFrameLayout() 方法
             Method getFrameLayout = unityPlayer.getClass().getMethod("getFrameLayout");
-
-            return (FrameLayout) getFrameLayout.invoke(unityPlayer);
+            return (android.view.View) getFrameLayout.invoke(unityPlayer);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            return unityPlayer;
+            // Unity 6 之前的版本，使用反射检查 UnityPlayer 是否是 View 的子类
+            try {
+                // 尝试将 UnityPlayer 转换为 View，如果失败会抛出 ClassCastException
+                return (android.view.View) (Object) unityPlayer;
+            } catch (ClassCastException ex) {
+                // 如果转换失败，返回 null
+                return null;
+            }
         }
     }
 
-    public void setZ(float v) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void setZ(float v) {
         try {
-            Method setZ = unityPlayer.getClass().getMethod("setZ");
-
-            setZ.invoke(unityPlayer, v);
-        } catch (NoSuchMethodException e) {}
+            // 获取 Unity 的 Frame 视图，在 Frame 上设置 Z 值
+            android.view.View frame = this.requestFrame();
+            if (frame != null && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                frame.setZ(v);
+            }
+        } catch (Exception e) {
+            // 如果获取 Frame 失败，尝试直接在 UnityPlayer 上设置 Z 值
+            try {
+                Method setZ = unityPlayer.getClass().getMethod("setZ", float.class);
+                setZ.invoke(unityPlayer, v);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
+                // 忽略，某些版本的 Unity 可能没有这个方法
+            }
+        }
     }
 
     public Object getContextPlayer() {
