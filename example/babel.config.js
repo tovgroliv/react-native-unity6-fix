@@ -1,11 +1,11 @@
 module.exports = {
-  presets: ['module:metro-react-native-babel-preset', '@babel/preset-typescript'],
+  presets: ['@react-native/babel-preset', '@babel/preset-typescript'],
   env: {
     production: {}
   },
   plugins: [
     'module:react-native-dotenv',
-    '@babel/plugin-proposal-export-namespace-from',
+    '@babel/plugin-transform-export-namespace-from',
     [
       'module-resolver',
       {

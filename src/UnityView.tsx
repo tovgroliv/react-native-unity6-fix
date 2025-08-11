@@ -3,6 +3,8 @@ import React from 'react';
 import NativeUnityView, { Commands } from './specs/UnityViewNativeComponent';
 import type { DirectEventHandler } from 'react-native/Libraries/Types/CodegenTypes';
 import { Platform } from 'react-native';
+import type { HostComponent } from 'react-native';
+import type { NativeProps } from './specs/UnityViewNativeComponent';
 
 type UnityViewContentUpdateEvent = Readonly<{
   message: string;
@@ -16,7 +18,7 @@ type RNUnityViewProps = {
   onPlayerQuit?: DirectEventHandler<UnityViewContentUpdateEvent>;
 };
 
-type ComponentRef = InstanceType<typeof NativeUnityView>;
+type ComponentRef = React.ElementRef<HostComponent<NativeProps>>;
 
 export default class UnityView extends React.Component<RNUnityViewProps> {
   ref = React.createRef<ComponentRef>();
@@ -69,7 +71,7 @@ export default class UnityView extends React.Component<RNUnityViewProps> {
     }
   }
 
-  render() {
+  render(): React.ReactElement {
     return <NativeUnityView ref={this.ref} {...this.getProps()} />;
   }
 }
