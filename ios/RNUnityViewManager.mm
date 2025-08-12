@@ -11,7 +11,23 @@
 
 @implementation RNUnityViewManager
 
++ (void)load {
+    UNITY_MANAGER_LOG(@"RNUnityViewManager +load called");
+}
+
+- (instancetype)init {
+    UNITY_MANAGER_LOG(@"RNUnityViewManager init called");
+    self = [super init];
+    return self;
+}
+
 RCT_EXPORT_MODULE(RNUnityView)
+
++ (NSString *)moduleName {
+    UNITY_MANAGER_LOG(@"RNUnityViewManager moduleName called");
+    return @"RNUnityView";
+}
+
 RCT_EXPORT_VIEW_PROPERTY(onUnityMessage, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onPlayerUnload, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onPlayerQuit, RCTBubblingEventBlock)

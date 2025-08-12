@@ -12,6 +12,12 @@ const log = (message: string, ...args: any[]) => {
   console.log(`${LOG_TAG} ${message}`, ...args);
 };
 
+// Логируем информацию о компоненте при загрузке модуля
+log('UnityView module loaded');
+log('NativeUnityView:', NativeUnityView);
+log('Commands:', Commands);
+log('Platform:', Platform.OS);
+
 type UnityViewContentUpdateEvent = Readonly<{
   message: string;
 }>;

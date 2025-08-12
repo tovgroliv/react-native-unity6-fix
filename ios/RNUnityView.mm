@@ -1,4 +1,5 @@
 #import "RNUnityView.h"
+#import "RNUnityViewDebug.h"
 #ifdef DEBUG
 #include <mach-o/ldsyms.h>
 #endif
@@ -120,6 +121,15 @@ UnityFramework* UnityFrameworkLoad() {
 NSDictionary* appLaunchOpts;
 
 static RNUnityView *sharedInstance;
+
++ (void)load {
+    UNITY_LOG(@"RNUnityView +load called");
+}
+
+- (instancetype)init {
+    UNITY_LOG(@"RNUnityView init called (without frame)");
+    return [self initWithFrame:CGRectZero];
+}
 
 - (bool)unityIsInitialized {
     bool isInitialized = [self ufw] && [[self ufw] appController];
