@@ -3,6 +3,9 @@
 #import <React/RCTBridgeModule.h>
 #import <RNUnityView.h>
 
+// Добавляем детальное логирование
+#define UNITY_MANAGER_LOG(fmt, ...) NSLog(@"[RNUnityViewManager] " fmt, ##__VA_ARGS__)
+
 @interface RNUnityViewManager : RCTViewManager <RCTBridgeModule>
 @end
 
@@ -16,13 +19,18 @@ RCT_EXPORT_VIEW_PROPERTY(onPlayerQuit, RCTBubblingEventBlock)
 RNUnityView *unity;
 
 - (UIView *)view {
+    UNITY_MANAGER_LOG(@"Creating Unity view");
     unity = [[RNUnityView alloc] init];
     UIWindow * main = [[[UIApplication sharedApplication] delegate] window];
 
     if(main != nil) {
+        UNITY_MANAGER_LOG(@"Making main window key and visible");
         [main makeKeyAndVisible];
+    } else {
+        UNITY_MANAGER_LOG(@"WARNING: Main window is nil");
     }
 
+    UNITY_MANAGER_LOG(@"Unity view created successfully");
     return unity;
 }
 
